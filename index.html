@@ -36,11 +36,18 @@
       box-shadow: 0 24px 70px rgba(0,0,0,.45);
       animation: fadeUp .9s ease-out both;
     }
-    .cover {
-      display: block;
-      width: 100%;
-      height: auto;
+    .cover-wrap { position: relative; }
+    .cover { display:block; width:100%; height:auto; }
+    .cover-play {
+      position:absolute; left:50%; bottom:4.8%; transform:translateX(-50%);
+      width:92px; height:92px; border-radius:50%;
+      border:2px solid rgba(255,224,170,.95);
+      background:rgba(30,19,11,.72); color:#ffd999;
+      font-size:2.35rem; line-height:1; display:grid; place-items:center;
+      cursor:pointer; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px);
+      box-shadow:0 12px 34px rgba(0,0,0,.35);
     }
+    .cover-play:active { transform:translateX(-50%) scale(.96); }
     .content {
       padding: 28px 24px 32px;
       text-align: center;
@@ -106,11 +113,14 @@
 <body>
   <main class="wrap">
     <section class="card">
-      <img class="cover" src="cover.png" alt="Ours Alone cover art">
+      <div class="cover-wrap">
+        <img class="cover" src="cover.png" alt="Ours Alone cover art">
+        <button class="cover-play" id="coverPlay" type="button" aria-label="Play Ours Alone">▶</button>
+      </div>
       <div class="content">
         <h1>Ours Alone</h1>
         <p class="subtitle">Song for Chuck by Kim</p>
-        <audio controls preload="metadata">
+        <audio id="songPlayer" controls preload="metadata">
           <source src="ours-alone.mp3" type="audio/mpeg">
           Your browser does not support audio playback.
         </audio>
@@ -168,5 +178,19 @@ Always and forever</pre>
       <p class="dedication">Always and forever</p>
     </section>
   </main>
+
+  <script>
+    const player = document.getElementById('songPlayer');
+    const coverButton = document.getElementById('coverPlay');
+    coverButton.addEventListener('click', async () => {
+      try {
+        if (player.paused) { await player.play(); } else { player.pause(); }
+      } catch (e) { player.scrollIntoView({behavior:'smooth', block:'center'}); }
+    });
+    player.addEventListener('play', () => { coverButton.textContent='❚❚'; coverButton.setAttribute('aria-label','Pause Ours Alone'); });
+    player.addEventListener('pause', () => { coverButton.textContent='▶'; coverButton.setAttribute('aria-label','Play Ours Alone'); });
+    player.addEventListener('ended', () => { coverButton.textContent='▶'; coverButton.setAttribute('aria-label','Play Ours Alone'); });
+  </script>
+
 </body>
 </html>
